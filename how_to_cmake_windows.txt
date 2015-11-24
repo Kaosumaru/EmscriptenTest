@@ -1,0 +1,5 @@
+emsdk install mingw-4.6.2-32bit
+emsdk activate mingw-4.6.2-32bit
+
+emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=mingw32-make -G "Unix Makefiles"
+mingw32-make
