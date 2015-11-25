@@ -40,10 +40,9 @@ struct bunny_data
 		RenderBear(position.x + 100.f, position.y, rotation);
 	}
 
-  void drawGL(int i)
+  void drawGL()
 	{
-		//::drawGL(position.x, position.y);
-    glRenderer.draw(position.x, position.y);
+    glRenderer.draw(position.x, position.y, scale);
 	}
 
 
@@ -96,6 +95,7 @@ void DrawBunnies()
 		bunny.draw();
 	}
 
+
 	if (!key_pressed)
 	   return;
 
@@ -112,12 +112,11 @@ void DrawBunnies()
 
 void DrawBunniesGL()
 {
-  int x = 0;
+
 	for(auto& bunny : bunnies)
 	{
 		bunny.update();
-		bunny.drawGL(x);
-    x ++;
+		bunny.drawGL();
 	}
 
 	if (!key_pressed)

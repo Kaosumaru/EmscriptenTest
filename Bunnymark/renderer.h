@@ -49,7 +49,8 @@ public:
 					break;
 			}
 
-			i++;
+			i ++;
+
 		}
 
 		glBufferData(GL_ARRAY_BUFFER, sizeof(UV)*_maxVertices, uv_data.data(), GL_STATIC_DRAW);
@@ -57,28 +58,28 @@ public:
 
 	}
 
-	void draw(float x, float y)
+	void draw(float x, float y, float scale = 1.0f)
 	{
-		float hw = 13.0f;
-		float hh = 18.5f;
+		float hw = 13.0f * scale;
+		float hh = 18.5f * scale;
 
-/*
+
 		if (_currentVertice != 0)
 		{
-			auto &c = vertices[_currentVertice];
+			auto &c = vertices[_currentVertice-1];
 			nextVertex() = c;
 		}
-*/
+
 		auto &v0 = nextVertex();
 		v0.x = hw + x;
 		v0.y = -hh + y;
 		v0.z = 0.0f;
-/*
+
 		if (_currentVertice != 1)
 		{
 			nextVertex() = v0;
 		}
-*/
+
 
 		auto &v1 = nextVertex();
 		v1.x = -hw + x;
@@ -103,8 +104,8 @@ public:
 		//_currentVertice--;
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData)* _currentVertice, vertices, GL_STREAM_DRAW);
-		//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VertexData) * _currentVertice, vertices);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData)* _currentVertice, nullptr, GL_STREAM_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VertexData) * _currentVertice, vertices);
 
 
 		glVertexAttribPointer(0 /* ? */, 3, GL_FLOAT, 0, 0, 0);
@@ -115,11 +116,12 @@ public:
 		glVertexAttribPointer(1 /* ? */, 2, GL_FLOAT, 0, 0, 0);
 		glEnableVertexAttribArray(1);
 
+/*
 		for (int i = 0; i < _currentVertice/4; i ++)
 		{
 			glDrawArrays ( GL_TRIANGLE_STRIP, i*4, 4 );
-		}
-	//	glDrawArrays ( GL_TRIANGLE_STRIP, 0, _currentVertice );
+		}*/
+		glDrawArrays ( GL_TRIANGLE_STRIP, 0, _currentVertice );
 
 		//glDrawArrays ( GL_TRIANGLE_STRIP, 0, _currentVertice );
 

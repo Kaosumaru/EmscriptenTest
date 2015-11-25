@@ -86,6 +86,10 @@ int EventHandler(SDL_Event *event) {
   switch(event->type) {
     case SDL_MOUSEBUTTONUP:
 			key_pressed = false;
+
+			{
+				cout << "Bunnies: " << bunnies.size() << endl;
+			}
       break;
     case SDL_MOUSEBUTTONDOWN:
 			key_pressed = true;
@@ -109,7 +113,7 @@ void poll_events()
 void frame()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+    //SDL_RenderClear(renderer);
 		glDisable(GL_DEPTH_TEST);
 
 		static bool first = true;
@@ -131,7 +135,7 @@ void frame()
 
 
 		glRenderer.DrawBatched();
-		
+
     SDL_RenderPresent(renderer);
 
 		poll_events();
