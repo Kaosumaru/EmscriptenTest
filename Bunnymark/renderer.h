@@ -13,6 +13,48 @@ public:
 		glGenBuffers(1, &_VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData)*_maxVertices, nullptr, GL_DYNAMIC_DRAW);
+
+
+	{
+		struct UV
+		{
+			float x,y;
+		};
+		glGenBuffers(1, &_VBO2);
+		glBindBuffer(GL_ARRAY_BUFFER, _VBO2);
+
+		std::vector<UV> uv_data;
+		uv_data.resize(_maxVertices);
+
+		int i = 0;
+		for (auto& uv : uv_data)
+		{
+			switch(i%4)
+			{
+				case 0:
+					uv.x = 1.f;
+					uv.y = 0.f;
+					break;
+				case 1:
+					uv.x = 0.f;
+					uv.y = 0.f;
+					break;
+				case 2:
+					uv.x = 1.f;
+					uv.y = 1.f;
+					break;
+				case 3:
+					uv.x = 0.f;
+					uv.y = 1.f;
+					break;
+			}
+
+			i++;
+		}
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(UV)*_maxVertices, uv_data.data(), GL_STATIC_DRAW);
+	}
+
 	}
 
 	void draw(float x, float y)
@@ -69,6 +111,10 @@ public:
 		glEnableVertexAttribArray(0);
 
 
+		glBindBuffer(GL_ARRAY_BUFFER, _VBO2);
+		glVertexAttribPointer(1 /* ? */, 2, GL_FLOAT, 0, 0, 0);
+		glEnableVertexAttribArray(1);
+
 		for (int i = 0; i < _currentVertice/4; i ++)
 		{
 			glDrawArrays ( GL_TRIANGLE_STRIP, i*4, 4 );
@@ -78,7 +124,7 @@ public:
 		//glDrawArrays ( GL_TRIANGLE_STRIP, 0, _currentVertice );
 
 		glDisableVertexAttribArray(0);
-
+		glDisableVertexAttribArray(1);
 		_currentVertice = 0;
 	}
 protected:
@@ -97,6 +143,7 @@ protected:
 	int _currentVertice = 0;
 
 	GLuint _VBO;
+	GLuint _VBO2;
 } glRenderer;
 
 

@@ -43,8 +43,7 @@ struct bunny_data
   void drawGL(int i)
 	{
 		//::drawGL(position.x, position.y);
-    //glRenderer.draw(position.x + 20.f, position.y);
-    glRenderer.draw(200.0f + i * 20.f, 200.0f);
+    glRenderer.draw(position.x, position.y);
 	}
 
 
