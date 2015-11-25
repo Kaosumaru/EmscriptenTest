@@ -116,6 +116,7 @@ void frame()
 
 		if (first)
 		{
+			glRenderer.Init();
 			glGenBuffers(1, &vertexPosObject);
 			DrawBunnies();
 			first = false;
@@ -129,7 +130,8 @@ void frame()
 		//drawGL();
 
 
-
+		glRenderer.DrawBatched();
+		
     SDL_RenderPresent(renderer);
 
 		poll_events();
