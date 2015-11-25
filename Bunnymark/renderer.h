@@ -96,6 +96,8 @@ public:
 		v3.y = hh + y;
 		v3.z = 0.0f;
 
+		if (_currentVertice + 100 >_maxVertices)
+			DrawBatched();
 		//nextVertex() = v3;
 	}
 
@@ -131,7 +133,7 @@ public:
 	}
 protected:
 
-	const static int _maxVertices = 200000;
+	const static int _maxVertices = 20000;
 	const static unsigned short int _primitiveRestartIndex = std::numeric_limits<unsigned short int>::max();
 
 	struct VertexData
