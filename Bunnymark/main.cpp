@@ -100,6 +100,13 @@ auto bunnys = vector<bunny_data>();
 SDL_Window* window;
 SDL_Renderer* renderer;
 
+bool key_pressed = false;
+
+void init()
+{
+
+}
+
 void frame()
 {
     static int x = 0;
@@ -112,16 +119,38 @@ void frame()
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 0, key_pressed ? 255 : 0, 255);
     SDL_RenderFillRect(renderer, &rect);
     SDL_RenderPresent(renderer);
+}
+
+int EventHandler(void *userdata, SDL_Event *event) {
+  int mod;
+
+  switch(event->type) {
+    case SDL_KEYUP:
+			key_pressed = false;
+      break;
+    case SDL_KEYDOWN:
+			key_pressed = true;
+			std::cout << "KeyDown" << std::endl;
+      break;
+  }
+  return 0;
 }
 
 int main()
 {
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("test", 0, 0, 640, 480, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("test", 0, 0, width, height, SDL_WINDOW_OPENGL);
     renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
     SDL_GL_SetSwapInterval(1);
-    emscripten_set_main_loop(frame, -1, 1);
+		init();
+
+		#ifdef __EMSCRIPTEN__
+		  emscripten_SDL_SetEventHandler(EventHandler, 0);
+			SDL_StartTextInput();
+			emscripten_set_main_loop(frame, -1, 1);
+		#endif
+
 }

@@ -21,5 +21,6 @@ if (EMSCRIPTEN)
 	add_definitions("-std=c++14")
 	#SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O2" )
 
-	set_target_properties(Bunnymark PROPERTIES LINK_FLAGS "-s USE_SDL=2")
+	set_target_properties(Bunnymark PROPERTIES LINK_FLAGS "-s USE_SDL=2 --preload-file bunny.png")
+
 endif(EMSCRIPTEN)
