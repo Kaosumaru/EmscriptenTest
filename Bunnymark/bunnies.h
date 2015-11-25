@@ -40,6 +40,13 @@ struct bunny_data
 		RenderBear(position.x, position.y, rotation);
 	}
 
+  void drawGL()
+	{
+		::drawGL(position.x, position.y);
+	}
+
+
+
 	void update()
 	{
 		auto &bunny = *this;
@@ -86,6 +93,28 @@ void DrawBunnies()
 	{
 		bunny.update();
 		bunny.draw();
+	}
+
+	if (!key_pressed)
+	   return;
+
+  if (bunnies.size() > 200000)
+    return;
+
+	for (auto i = 0; i < amount; i++)
+	{
+		bunnies.emplace_back();
+		bunnies.back().randomize();
+	}
+
+}
+
+void DrawBunniesGL()
+{
+	for(auto& bunny : bunnies)
+	{
+		bunny.update();
+		bunny.drawGL();
 	}
 
 	if (!key_pressed)

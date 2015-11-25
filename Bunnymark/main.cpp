@@ -116,10 +116,12 @@ void frame()
 			first = false;
 		}
 
+		DrawBunniesGL();
+
 	  //SDL_SetRenderDrawColor(renderer, 255, 0, key_pressed ? 255 : 0, 255);
     //SDL_RenderFillRect(renderer, &rect);
 		//RenderBear(10.0f, 10.0f, 0.0f);
-		drawGL();
+		//drawGL();
 
 
 

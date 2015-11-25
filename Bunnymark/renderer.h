@@ -1,8 +1,6 @@
 
-void drawGL()
+void drawGL(float x, float y)
 {
-	float x = 200.0f, y = 200.0f;
-
 	float hw = 13.0f;
 	float hh = 18.5f;
 
