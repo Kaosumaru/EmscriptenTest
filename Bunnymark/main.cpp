@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <SDL/SDL.h>
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -100,11 +101,30 @@ auto bunnys = vector<bunny_data>();
 SDL_Window* window;
 SDL_Renderer* renderer;
 
+SDL_Surface *bunny_image;
+SDL_Texture *bunny_tex;
+
 bool key_pressed = false;
 
 void init()
 {
+	bunny_image = IMG_Load("bunny.png");
 
+	if (!bunny_image)
+  {
+     cout << "IMG_Load: " << IMG_GetError() << endl;
+     return;
+  }
+
+	bunny_tex = SDL_CreateTextureFromSurface(renderer, bunny_image);
+
+}
+
+//TODO
+void deinit()
+{
+	SDL_DestroyTexture (bunny_tex);
+	SDL_FreeSurface (bunny_image);
 }
 
 void frame()
@@ -121,6 +141,9 @@ void frame()
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 0, key_pressed ? 255 : 0, 255);
     SDL_RenderFillRect(renderer, &rect);
+
+		SDL_RenderCopy (renderer, bunny_tex, NULL, NULL);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -148,7 +171,7 @@ int main()
 		init();
 
 		#ifdef __EMSCRIPTEN__
-		  emscripten_SDL_SetEventHandler(EventHandler, 0);
+		  //emscripten_SDL_SetEventHandler(EventHandler, 0);
 			SDL_StartTextInput();
 			emscripten_set_main_loop(frame, -1, 1);
 		#endif
