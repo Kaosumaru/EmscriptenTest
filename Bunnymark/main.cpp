@@ -53,6 +53,8 @@ void init()
 
 	bunny_tex = SDL_CreateTextureFromSurface(renderer, bunny_image);
 
+
+
 }
 
 //TODO
@@ -71,6 +73,8 @@ bool key_pressed = false;
 
 GLuint vertexPosObject;
 
+
+//GLfloat vVerticesData[200000 * ]
 
 #include "renderer.h"
 #include "bunnies.h"
@@ -106,6 +110,7 @@ void frame()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+		glDisable(GL_DEPTH_TEST);
 
 		static bool first = true;
 

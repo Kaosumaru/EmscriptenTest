@@ -13,7 +13,7 @@ void drawGL(float x, float y)
 	// No clientside arrays, so do this in a webgl-friendly manner
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
-	glBufferData(GL_ARRAY_BUFFER, 12*4, vVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 12*4, vVertices, GL_DYNAMIC_DRAW);
 
 	// Load the vertex data
 	glVertexAttribPointer(0 /* ? */, 3, GL_FLOAT, 0, 0, 0);
