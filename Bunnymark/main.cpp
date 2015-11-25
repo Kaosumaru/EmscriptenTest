@@ -108,10 +108,20 @@ void poll_events()
 }
 
 
-
+int frames_fps = 60 * 3;
 
 void frame()
 {
+		static Uint64 PerfCountFrequency = SDL_GetPerformanceFrequency();
+		static unsigned frame_count = 0;
+		frame_count++;
+
+		Uint64 LastCounter = 0;
+		if (frame_count % frames_fps == 0)
+		{
+			LastCounter = SDL_GetPerformanceCounter();
+		}
+
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     //SDL_RenderClear(renderer);
 		glDisable(GL_DEPTH_TEST);
@@ -137,6 +147,14 @@ void frame()
 		glRenderer.DrawBatched();
 
     SDL_RenderPresent(renderer);
+
+
+		if (frame_count % frames_fps == 0)
+		{
+			auto CounterElapsed = SDL_GetPerformanceCounter() - LastCounter;
+			auto MSPerFrame = (((1000.0f * CounterElapsed) / (float)PerfCountFrequency));
+			cout << "Frame: " << MSPerFrame << "ms" << " FPS: " << (1000.0f/MSPerFrame) << endl;
+		}
 
 		poll_events();
 }
