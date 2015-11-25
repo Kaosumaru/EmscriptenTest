@@ -16,8 +16,8 @@ if (EMSCRIPTEN)
 	set(CMAKE_EXECUTABLE_SUFFIX ".html")
 	add_definitions("-std=c++14")
 
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_SDL_IMAGE=2")
-	set_target_properties(Bunnymark PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 --preload-file bunny.png")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_SDL_IMAGE=2 --use-preload-plugins")
+	set_target_properties(Bunnymark PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 --use-preload-plugins --preload-file ../data")
 
 elseif()
 	include(FindPkgConfig)

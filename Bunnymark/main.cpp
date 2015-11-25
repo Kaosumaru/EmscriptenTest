@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <vector>
 #include "SDL2/SDL.h"
@@ -9,9 +11,57 @@
 
 using namespace std;
 
+
+
+SDL_Window* window;
+SDL_Renderer* renderer;
+
+SDL_Surface *bunny_image;
+SDL_Texture *bunny_tex;
+
+void RenderBear(float x, float y, float angle)
+{
+	SDL_Point center = {13,18};
+	SDL_Rect dstrect;
+
+	dstrect.x = x;
+	dstrect.y = y;
+	dstrect.w = 26;
+	dstrect.h = 37;
+
+	SDL_RenderCopyEx (renderer, bunny_tex, NULL, &dstrect, angle, &center, SDL_FLIP_NONE);
+}
+
+void init()
+{
+	//IMG_Init(IMG_INIT_PNG);
+	bunny_image = IMG_Load("data/bunny.png");
+
+	if (!bunny_image)
+  {
+     cout << "IMG_Load: " << IMG_GetError() << endl;
+     return;
+  }
+
+	bunny_tex = SDL_CreateTextureFromSurface(renderer, bunny_image);
+
+}
+
+//TODO
+void deinit()
+{
+	SDL_DestroyTexture (bunny_tex);
+	SDL_FreeSurface (bunny_image);
+}
+
+
+
+
+
+
 float randomFloat()
 {
-	return 1.0f;
+	return (rand() % 10001) / 10000.0f;
 }
 
 
@@ -28,7 +78,7 @@ auto minY = 0;
 auto startBunnyCount = 2;
 auto isAdding = false;
 
-
+auto amount = 100;
 
 struct bunny_data
 {
@@ -55,7 +105,7 @@ struct bunny_data
 
 	void draw()
 	{
-
+		RenderBear(position.x, position.y, rotation);
 	}
 
 	void update()
@@ -96,35 +146,61 @@ struct bunny_data
 };
 
 
-auto bunnys = vector<bunny_data>();
+auto bunnies = vector<bunny_data>();
 
-SDL_Window* window;
-SDL_Renderer* renderer;
-
-SDL_Surface *bunny_image;
-SDL_Texture *bunny_tex;
 
 bool key_pressed = false;
 
-void init()
+void DrawBunnies()
 {
-	bunny_image = IMG_Load("bunny.png");
+	for(auto& bunny : bunnies)
+	{
+		bunny.update();
+		bunny.draw();
+	}
 
-	if (!bunny_image)
-  {
-     cout << "IMG_Load: " << IMG_GetError() << endl;
-     return;
-  }
+	if (!key_pressed)
+	return;
 
-	bunny_tex = SDL_CreateTextureFromSurface(renderer, bunny_image);
+	for (auto i = 0; i < amount; i++)
+	{
+		bunnies.emplace_back();
+		bunnies.back().randomize();
+	}
 
 }
 
-//TODO
-void deinit()
+void InitBunnies()
 {
-	SDL_DestroyTexture (bunny_tex);
-	SDL_FreeSurface (bunny_image);
+	for (auto i = 0; i < startBunnyCount; i++)
+	{
+		bunnies.emplace_back();
+		bunnies.back().randomize();
+	}
+}
+
+
+int EventHandler(SDL_Event *event) {
+  int mod;
+
+  switch(event->type) {
+    case SDL_MOUSEBUTTONUP:
+			key_pressed = false;
+      break;
+    case SDL_MOUSEBUTTONDOWN:
+			key_pressed = true;
+      break;
+  }
+  return 0;
+}
+
+
+void poll_events()
+{
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		EventHandler(&event);
+	};
 }
 
 void frame()
@@ -139,28 +215,17 @@ void frame()
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 255, 0, key_pressed ? 255 : 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
 
-		SDL_RenderCopy (renderer, bunny_tex, NULL, NULL);
+		DrawBunnies();
+	  //SDL_SetRenderDrawColor(renderer, 255, 0, key_pressed ? 255 : 0, 255);
+    //SDL_RenderFillRect(renderer, &rect);
+		//RenderBear(10.0f, 10.0f, 0.0f);
 
     SDL_RenderPresent(renderer);
+
+		poll_events();
 }
 
-int EventHandler(void *userdata, SDL_Event *event) {
-  int mod;
-
-  switch(event->type) {
-    case SDL_KEYUP:
-			key_pressed = false;
-      break;
-    case SDL_KEYDOWN:
-			key_pressed = true;
-			std::cout << "KeyDown" << std::endl;
-      break;
-  }
-  return 0;
-}
 
 int main()
 {
@@ -169,6 +234,8 @@ int main()
     renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
     SDL_GL_SetSwapInterval(1);
 		init();
+
+		InitBunnies();
 
 		#ifdef __EMSCRIPTEN__
 		  //emscripten_SDL_SetEventHandler(EventHandler, 0);
