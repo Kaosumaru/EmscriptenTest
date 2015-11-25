@@ -84,6 +84,7 @@ int EventHandler(SDL_Event *event) {
   int mod;
 
   switch(event->type) {
+		case SDL_FINGERUP:
     case SDL_MOUSEBUTTONUP:
 			key_pressed = false;
 
@@ -91,6 +92,7 @@ int EventHandler(SDL_Event *event) {
 				cout << "Bunnies: " << bunnies.size() << endl;
 			}
       break;
+		case SDL_FINGERDOWN:
     case SDL_MOUSEBUTTONDOWN:
 			key_pressed = true;
       break;
