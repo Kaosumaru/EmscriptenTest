@@ -69,6 +69,10 @@ auto amount = 100;
 
 bool key_pressed = false;
 
+GLuint vertexPosObject;
+
+
+#include "renderer.h"
 #include "bunnies.h"
 
 
@@ -96,42 +100,10 @@ void poll_events()
 }
 
 
-GLuint vertexPosObject;
 
-
-void drawGL()
-{
-	float x = 200.0f, y = 200.0f;
-
-	GLfloat vVertices[] = {  0.0f + x,  0.f + y, 0.0f,
-	                         -50.f+x, 0.f + y, 0.0f,
-	                          0.f+x, 100.f + y, 0.0f,
-													  -50.f+x, 100.f + y, 0.0f };
-
-	// No clientside arrays, so do this in a webgl-friendly manner
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
-	glBufferData(GL_ARRAY_BUFFER, 12*4, vVertices, GL_STATIC_DRAW);
-
-	// Load the vertex data
-	glVertexAttribPointer(0 /* ? */, 3, GL_FLOAT, 0, 0, 0);
-	glEnableVertexAttribArray(0);
-
-	glDrawArrays ( GL_TRIANGLE_STRIP, 0, 4 );
-
-	glDisableVertexAttribArray(0);
-}
 
 void frame()
 {
-    static int x = 0;
-    static int y = 0;
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = 100;
-    rect.h = 100;
-
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
