@@ -5,11 +5,19 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 
+#include <GLES2/gl2.h>
+#include <EGL/egl.h>
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
 
 using namespace std;
+
+float randomFloat()
+{
+	return (rand() % 10001) / 10000.0f;
+}
 
 
 
@@ -57,127 +65,11 @@ void deinit()
 
 
 
-
-
-float randomFloat()
-{
-	return (rand() % 10001) / 10000.0f;
-}
-
-
-auto width = 800;
-auto height = 600;
-
-auto gravity = 0.5;//1.5
-
-auto maxX = width;
-auto minX = 0;
-auto maxY = height;
-auto minY = 0;
-
-auto startBunnyCount = 2;
-auto isAdding = false;
-
 auto amount = 100;
-
-struct bunny_data
-{
-	struct
-	{
-		float x = 0.0f;
-		float y = 0.0f;
-	} position;
-
-	float speedX = 0.0f;
-	float speedY = 0.0f;
-	float scale = 1.0f;
-	float rotation  = 0.0f;
-
-	void randomize()
-	{
-		speedX = randomFloat() * 10.0f;
-		speedY = randomFloat() * 10.f - 5.0f;
-		scale = 0.5f + randomFloat() * 0.5f;
-		rotation = randomFloat() - 0.5f;
-
-		//var random = Math2.randomInt(0, container.children.length-2);
-	}
-
-	void draw()
-	{
-		RenderBear(position.x, position.y, rotation);
-	}
-
-	void update()
-	{
-		auto &bunny = *this;
-		//so wrong
-		bunny.position.x += bunny.speedX;
-		bunny.position.y += bunny.speedY;
-		bunny.speedY += gravity;
-
-		if (bunny.position.x > maxX)
-		{
-			bunny.speedX *= -1;
-			bunny.position.x = maxX;
-		}
-		else if (bunny.position.x < minX)
-		{
-			bunny.speedX *= -1;
-			bunny.position.x = minX;
-		}
-
-		if (bunny.position.y > maxY)
-		{
-			bunny.speedY *= -0.85;
-			bunny.position.y = maxY;
-			//bunny.spin = (randomFloat()-0.5) * 0.2  so crappy
-			if (randomFloat() > 0.5)
-			{
-				bunny.speedY -= randomFloat() * 6;
-			}
-		}
-		else if (bunny.position.y < minY)
-		{
-			bunny.speedY = 0;
-			bunny.position.y = minY;
-		}
-	}
-};
-
-
-auto bunnies = vector<bunny_data>();
-
 
 bool key_pressed = false;
 
-void DrawBunnies()
-{
-	for(auto& bunny : bunnies)
-	{
-		bunny.update();
-		bunny.draw();
-	}
-
-	if (!key_pressed)
-	return;
-
-	for (auto i = 0; i < amount; i++)
-	{
-		bunnies.emplace_back();
-		bunnies.back().randomize();
-	}
-
-}
-
-void InitBunnies()
-{
-	for (auto i = 0; i < startBunnyCount; i++)
-	{
-		bunnies.emplace_back();
-		bunnies.back().randomize();
-	}
-}
+#include "bunnies.h"
 
 
 int EventHandler(SDL_Event *event) {
@@ -203,6 +95,42 @@ void poll_events()
 	};
 }
 
+
+GLuint vertexPosObject;
+
+
+void drawGL()
+{
+	float x = 200.0f, y = 200.0f;
+
+	GLfloat vVertices[] = {  0.0f + x,  0.f + y, 0.0f,
+	                         -50.f+x, 0.f + y, 0.0f,
+	                          0.f+x, 100.f + y, 0.0f };
+
+	// No clientside arrays, so do this in a webgl-friendly manner
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
+	glBufferData(GL_ARRAY_BUFFER, 9*4, vVertices, GL_STATIC_DRAW);
+
+	// Set the viewport
+	//glViewport ( 0, 0, esContext->width, esContext->height );
+
+	// Clear the color buffer
+	//glClear ( GL_COLOR_BUFFER_BIT );
+
+	// Use the program object
+	//glUseProgram ( userData->programObject );
+
+	// Load the vertex data
+	glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
+	glVertexAttribPointer(0 /* ? */, 3, GL_FLOAT, 0, 0, 0);
+	glEnableVertexAttribArray(0);
+
+	glDrawArrays ( GL_TRIANGLES, 0, 3 );
+
+	glDisableVertexAttribArray(0);
+}
+
 void frame()
 {
     static int x = 0;
@@ -216,10 +144,21 @@ void frame()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-		DrawBunnies();
+		static bool first = true;
+
+		if (first)
+		{
+			glGenBuffers(1, &vertexPosObject);
+			DrawBunnies();
+			first = false;
+		}
+
 	  //SDL_SetRenderDrawColor(renderer, 255, 0, key_pressed ? 255 : 0, 255);
     //SDL_RenderFillRect(renderer, &rect);
 		//RenderBear(10.0f, 10.0f, 0.0f);
+		drawGL();
+
+
 
     SDL_RenderPresent(renderer);
 
